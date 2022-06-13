@@ -67,6 +67,7 @@
     <Compile Include="Assets\Scripts\Destroyer.cs" />
     <Compile Include="Assets\Scripts\HitVelDetection.cs" />
     <Compile Include="Assets\Scripts\Instantiation.cs" />
+    <Compile Include="Assets\Scripts\ObjectReplicator.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:/2019.4.17f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>

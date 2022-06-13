@@ -24,20 +24,19 @@ public class PlayerController : MonoBehaviour {
 	private Animator cloudanim;
 	public GameObject Cloud;
 
-	private ParticleSystem particle;
-	private ParticleSystem particle2;
+	public ParticleSystem particle;
+	public ParticleSystem particle2;
 
 	private Rigidbody2D rb2d;
 	private Animator anim;
 	private bool isGrounded = false;
+	public int cloneFlag = 1;
 
 
 	// Use this for initialization
 	void Start () {
 		rb2d = GetComponent<Rigidbody2D>();
 		anim = GetComponent<Animator>();
-		particle = GameObject.Find("DashParticle").GetComponent<ParticleSystem>();
-		particle2 = GameObject.Find("DashParticle2").GetComponent<ParticleSystem>();
 		//cloudanim = GetComponent<Animator>();
 
 		Cloud = GameObject.Find("Cloud");
@@ -53,7 +52,7 @@ public class PlayerController : MonoBehaviour {
 		if ((Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.LeftAlt)) && (isGrounded || !doubleJump) && !isDashing)
 		{
 			rb2d.velocity = new Vector2(rb2d.velocity.x, 0);
-			rb2d.AddForce(new Vector2(0,jumpForce));
+			rb2d.AddForce(new Vector2(0, cloneFlag * jumpForce));
 
 			if (!doubleJump && !isGrounded)
 			{
@@ -105,7 +104,7 @@ public class PlayerController : MonoBehaviour {
 			if ((hor > 0 && !lookingRight)||(hor < 0 && lookingRight))
 				Flip ();
 		 
-			anim.SetFloat ("vSpeed", GetComponent<Rigidbody2D>().velocity.y);
+			anim.SetFloat ("vSpeed", cloneFlag * GetComponent<Rigidbody2D>().velocity.y);
         }
 	}
 
@@ -140,6 +139,7 @@ public class PlayerController : MonoBehaviour {
 		rb2d.gravityScale = 0;
 
 		particle.Play();
+		print(particle.isPlaying);
 
 		while (timer > 0)
         {

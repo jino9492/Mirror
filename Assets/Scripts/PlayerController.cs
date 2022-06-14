@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour {
 
 	public float dashSpeed;
 	public bool isDashing;
+	public bool isJumping;
+	public bool isJumpingReverse;
 	public float dashCoolDown;
 	public float dashTimer;
 
@@ -29,6 +31,9 @@ public class PlayerController : MonoBehaviour {
 
 	private Rigidbody2D rb2d;
 	private Animator anim;
+	private GameObject replicatedPlayer;
+	private CrashChecker crashChecker;
+	public string crashingObjectName = "Furry Clone";
 	private bool isGrounded = false;
 	public int cloneFlag = 1;
 
@@ -37,6 +42,9 @@ public class PlayerController : MonoBehaviour {
 	void Start () {
 		rb2d = GetComponent<Rigidbody2D>();
 		anim = GetComponent<Animator>();
+		replicatedPlayer = GameObject.Find("Furry Clone");
+		crashChecker = GameObject.Find(crashingObjectName).transform.GetChild(5).GetComponent<CrashChecker>();
+		print(crashChecker);
 		//cloudanim = GetComponent<Animator>();
 
 		Cloud = GameObject.Find("Cloud");
@@ -51,8 +59,7 @@ public class PlayerController : MonoBehaviour {
 
 		if ((Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.LeftAlt)) && (isGrounded || !doubleJump) && !isDashing)
 		{
-			rb2d.velocity = new Vector2(rb2d.velocity.x, 0);
-			rb2d.AddForce(new Vector2(0, cloneFlag * jumpForce));
+			isJumping = true;
 
 			if (!doubleJump && !isGrounded)
 			{
@@ -65,7 +72,8 @@ public class PlayerController : MonoBehaviour {
 
 		if (Input.GetKeyDown(KeyCode.DownArrow) && !isGrounded && !isDashing)
 		{
-			rb2d.AddForce(new Vector2(0,-jumpForce));
+			isJumpingReverse = true;
+			
 			Boost = Instantiate(Resources.Load("Prefabs/Cloud"), transform.position, transform.rotation) as GameObject;
 			//cloudanim.Play("cloud");
 		}
@@ -87,6 +95,17 @@ public class PlayerController : MonoBehaviour {
 
 		if (!isDashing)
         {
+			if (isJumping){
+				rb2d.velocity = new Vector2(rb2d.velocity.x, 0);
+				rb2d.AddForce(new Vector2(0, cloneFlag * jumpForce));
+				isJumping = false;
+			}
+
+			if (isJumpingReverse){
+				rb2d.AddForce(new Vector2(0, cloneFlag * -jumpForce));
+				isJumpingReverse = false;
+			}
+
 			hor = Input.GetAxisRaw("Horizontal");
 			if (hor != 0)
 				isMoving = true;
@@ -95,6 +114,12 @@ public class PlayerController : MonoBehaviour {
 
 			anim.SetBool("IsMoving", isMoving);
 
+			if(crashChecker.isCrashed){
+				if(lookingRight && hor > 0)
+					hor = 0;
+				else if(!lookingRight && hor < 0)
+					hor = 0;
+			}
 			rb2d.velocity = new Vector2 (hor * maxSpeed, rb2d.velocity.y);
 		  
 			isGrounded = Physics2D.OverlapCircle (groundCheck.position, 0.15F, whatIsGround);

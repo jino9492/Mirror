@@ -17,7 +17,6 @@ public class PlayerController : MonoBehaviour {
 	public float dashTimer;
 
 	public float hor;
-	[HideInInspector]
 	public bool isMoving;
 	public bool lookingRight = true;
 	bool doubleJump = false;
@@ -29,6 +28,7 @@ public class PlayerController : MonoBehaviour {
 	public ParticleSystem particle;
 	public ParticleSystem particle2;
 
+	
 	private Rigidbody2D rb2d;
 	private Animator anim;
 	private GameObject replicatedPlayer;
@@ -177,5 +177,11 @@ public class PlayerController : MonoBehaviour {
 		rb2d.gravityScale = originalGravity;
 		particle.Stop();
 		particle2.Play();
+	}
+
+	void OnColliderEnter2D(Collider2D collider){
+		if(collider.transform.name == "Obstacle"){
+			print(collider.transform.name);
+		}
 	}
 }

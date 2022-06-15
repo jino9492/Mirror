@@ -15,4 +15,9 @@ public class ObstacleController : MonoBehaviour
     {
         transform.Rotate(new Vector3(0, 0, 5));
     }
+
+    void OnTriggerEnter2D(Collider2D collider)
+    {
+        collider.gameObject.SetActive(false);
+    }
 }

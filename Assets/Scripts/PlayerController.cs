@@ -17,7 +17,6 @@ public class PlayerController : MonoBehaviour {
 	public float dashTimer;
 
 	public float hor;
-	[HideInInspector]
 	public bool isMoving;
 	public bool lookingRight = true;
 	bool doubleJump = false;
@@ -26,9 +25,10 @@ public class PlayerController : MonoBehaviour {
 	private Animator cloudanim;
 	public GameObject Cloud;
 
-	public ParticleSystem particle;
+    public ParticleSystem particle;
 	public ParticleSystem particle2;
 
+	
 	private Rigidbody2D rb2d;
 	private Animator anim;
 	private GameObject replicatedPlayer;
@@ -43,8 +43,8 @@ public class PlayerController : MonoBehaviour {
 		rb2d = GetComponent<Rigidbody2D>();
 		anim = GetComponent<Animator>();
 		replicatedPlayer = GameObject.Find("Furry Clone");
-		crashChecker = GameObject.Find(crashingObjectName).transform.GetChild(5).GetComponent<CrashChecker>();
-		print(crashChecker);
+		crashChecker = GameObject.Find(crashingObjectName).transform.GetChild(4).GetComponent<CrashChecker>();
+        particle = GameObject.Find("DashParticle").GetComponent<ParticleSystem>();
 		//cloudanim = GetComponent<Animator>();
 
 		Cloud = GameObject.Find("Cloud");
@@ -162,10 +162,8 @@ public class PlayerController : MonoBehaviour {
         }
 
 		rb2d.gravityScale = 0;
-
-		particle.Play();
-		print(particle.isPlaying);
-
+        particle.Stop();
+        particle.Play();
 		while (timer > 0)
         {
 			rb2d.velocity = new Vector2(dir * dashSpeed, 0);
@@ -175,7 +173,6 @@ public class PlayerController : MonoBehaviour {
 
 		isDashing = false;
 		rb2d.gravityScale = originalGravity;
-		particle.Stop();
 		particle2.Play();
 	}
 }

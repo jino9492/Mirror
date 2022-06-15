@@ -8,7 +8,10 @@ public class CameraController : MonoBehaviour
 	public float Y_cameraOffset = 0f;
 	public GameObject background;
 	public GameObject mirror;
-	Camera mycam;
+	private Camera mycam;
+
+	public float shakeDuration;
+	public float magnitude;
 
 	public void Start()
 	{
@@ -29,4 +32,22 @@ public class CameraController : MonoBehaviour
 
 
 	}
+
+	public IEnumerator CameraShake()
+    {
+		float elapsed = 0.0f;
+		Vector3 originalPosition = transform.position;
+
+		while (elapsed < shakeDuration)
+        {
+			float x = Random.Range(-1f, 1f) * magnitude;
+			float y = Random.Range(-1f, 1f) * magnitude;
+
+			transform.position = Vector3.Lerp(transform.position, new Vector3(originalPosition.x + x, originalPosition.y + y, originalPosition.z), 0.1f);
+
+			elapsed += Time.deltaTime;
+
+			yield return null;
+		}
+    }
 }

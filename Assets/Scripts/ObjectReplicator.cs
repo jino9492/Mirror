@@ -13,7 +13,6 @@ public class ObjectReplicator : MonoBehaviour
         ObstacleObjects = GameObject.FindGameObjectsWithTag("Obstacle");
         replicatedPlayer = Instantiate(Resources.Load("Prefabs/Furry")) as GameObject;
         replicatedPlayer.transform.name = "Furry Clone";
-        replicatedPlayer.GetComponent<PlayerController>().crashingObjectName = "Furry";
     }
 
     void Start()
@@ -21,6 +20,7 @@ public class ObjectReplicator : MonoBehaviour
         cam = GameObject.Find("Main Camera").GetComponent<CameraController>();
         player = GameObject.Find("Furry");
 
+        replicatedPlayer.transform.SetParent(GameObject.Find("Players").transform);
         replicatedPlayer.transform.position = new Vector3(replicatedPlayer.transform.position.x, cam.transform.position.y + (cam.transform.position.y - replicatedPlayer.transform.position.y), 0);
         replicatedPlayer.transform.rotation = Quaternion.Euler(0, 180, 180);
         replicatedPlayer.GetComponent<Rigidbody2D>().gravityScale *= -1;
@@ -30,7 +30,21 @@ public class ObjectReplicator : MonoBehaviour
         {
             GameObject newObstacle = Instantiate(obstacle) as GameObject;
             newObstacle.transform.position = new Vector3(newObstacle.transform.position.x, cam.transform.position.y + (cam.transform.position.y - newObstacle.transform.position.y), 0);
-            newObstacle.GetComponent<SpriteRenderer>().sprite = null;
+            if (newObstacle.transform.position.y > cam.transform.position.y && newObstacle.GetComponent<BoxCollider2D>() != null)
+            {
+                newObstacle.transform.position = 
+                    new Vector3(
+                        newObstacle.transform.position.x, 
+                        newObstacle.transform.position.y - newObstacle.GetComponent<BoxCollider2D>().offset.y, 
+                        newObstacle.transform.position.z
+                        );
+            }
+
+            newObstacle.transform.SetParent(GameObject.Find("Obstacles").transform);
+            if (newObstacle.GetComponent<SpriteRenderer>() != null)
+                newObstacle.GetComponent<SpriteRenderer>().sprite = null;
+            else
+                newObstacle.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = null;
         }
     }
 

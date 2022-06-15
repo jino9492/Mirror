@@ -28,12 +28,12 @@ public class PlayerController : MonoBehaviour {
     public ParticleSystem particle;
 	public ParticleSystem particle2;
 
-	
+	public GameObject FurryDashParticle;
+
 	private Rigidbody2D rb2d;
 	private Animator anim;
 	private GameObject replicatedPlayer;
 	private CrashChecker crashChecker;
-	public string crashingObjectName = "Furry Clone";
 	private bool isGrounded = false;
 	public int cloneFlag = 1;
 
@@ -43,8 +43,10 @@ public class PlayerController : MonoBehaviour {
 		rb2d = GetComponent<Rigidbody2D>();
 		anim = GetComponent<Animator>();
 		replicatedPlayer = GameObject.Find("Furry Clone");
-		crashChecker = GameObject.Find(crashingObjectName).transform.GetChild(4).GetComponent<CrashChecker>();
-        particle = GameObject.Find("DashParticle").GetComponent<ParticleSystem>();
+		crashChecker = transform.GetChild(4).GetComponent<CrashChecker>();
+
+		FurryDashParticle = GameObject.Find(transform.name + " DashParticle");
+		particle = GameObject.Find(transform.name+" DashParticle").GetComponent<ParticleSystem>();
 		//cloudanim = GetComponent<Animator>();
 
 		Cloud = GameObject.Find("Cloud");
@@ -69,7 +71,6 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 
-
 		if (Input.GetKeyDown(KeyCode.DownArrow) && !isGrounded && !isDashing)
 		{
 			isJumpingReverse = true;
@@ -83,6 +84,8 @@ public class PlayerController : MonoBehaviour {
         else
 			dashTimer -= Time.deltaTime;
 
+		if (isJumping)
+			transform.SetParent(GameObject.Find("Players").transform);
 	}
 
 
@@ -92,6 +95,7 @@ public class PlayerController : MonoBehaviour {
 			doubleJump = false;
 
 		anim.SetBool("IsDashing", isDashing);
+		FurryDashParticle.transform.position = transform.position;
 
 		if (!isDashing)
         {

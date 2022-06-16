@@ -66,12 +66,14 @@
     <Compile Include="Assets\Scripts\CameraController.cs" />
     <Compile Include="Assets\Scripts\CrashChecker.cs" />
     <Compile Include="Assets\Scripts\Destroyer.cs" />
+    <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\HitVelDetection.cs" />
     <Compile Include="Assets\Scripts\Instantiation.cs" />
     <Compile Include="Assets\Scripts\ObjectMover.cs" />
     <Compile Include="Assets\Scripts\ObjectReplicator.cs" />
     <Compile Include="Assets\Scripts\ObstacleController.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
+    <Compile Include="Assets\Scripts\ResetJump.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:/2019.4.17f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>

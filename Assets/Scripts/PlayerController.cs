@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour {
 	public float hor;
 	public bool isMoving;
 	public bool lookingRight = true;
-	bool doubleJump = false;
+	public bool doubleJump = false;
 	public GameObject Boost;
 	
 	private Animator cloudanim;
@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour {
 	private Animator anim;
 	private GameObject replicatedPlayer;
 	private CrashChecker crashChecker;
-	private bool isGrounded = false;
+	public bool isGrounded = false;
 	public int cloneFlag = 1;
 
 

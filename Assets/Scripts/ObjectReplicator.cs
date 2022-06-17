@@ -54,6 +54,9 @@ public class ObjectReplicator : MonoBehaviour
                         );
             }
 
+            newObstacle.GetComponent<ParticleSystem>().startColor = new Vector4(0,0,0,0f);
+            newObstacle.transform.GetChild(0).GetComponent<ParticleSystem>().startColor = new Vector4(0, 0, 0, 0f);
+
             newObstacle.transform.SetParent(GameObject.Find("Obstacles").transform);
         }
     }

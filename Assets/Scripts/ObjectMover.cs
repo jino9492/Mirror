@@ -132,7 +132,7 @@ public class ObjectMover : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Foot"))
+        if (other.CompareTag("Foot") && !other.name.StartsWith("Harmful"))
         {
             other.transform.parent.transform.SetParent(transform);
         }
@@ -140,7 +140,7 @@ public class ObjectMover : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Foot") && other.name.StartsWith("Harmful"))
+        if (other.CompareTag("Foot"))
         {
             other.transform.parent.transform.SetParent(GameObject.Find("Players").transform);
         }

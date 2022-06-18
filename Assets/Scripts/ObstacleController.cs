@@ -20,10 +20,10 @@ public class ObstacleController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collider)
     {
-        /*if (collider.name == "Furry")
+        if (collider.name == "Furry")
             collider.transform.position = new Vector3(-3, -2, 0);
         else
-            collider.transform.position = new Vector3(-3, 2, 0);*/
+            collider.transform.position = new Vector3(-3, 2, 0);
 
         cam.StartCoroutine("CameraShake");
 
@@ -32,6 +32,6 @@ public class ObstacleController : MonoBehaviour
         if (collider.name == "Furry Clone")
             bloodParticle.GetComponent<ParticleSystem>().gravityModifier *= -1;
 
-        collider.gameObject.SetActive(false);
+        //collider.gameObject.SetActive(false);
     }
 }

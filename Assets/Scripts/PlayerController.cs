@@ -11,33 +11,44 @@ public class PlayerController : MonoBehaviour {
 
 	public float dashSpeed;
 	public bool isDashing;
+	public bool isJumping;
+	public bool isJumpingReverse;
 	public float dashCoolDown;
 	public float dashTimer;
 
 	public float hor;
-	[HideInInspector]
 	public bool isMoving;
 	public bool lookingRight = true;
-	bool doubleJump = false;
+	public bool doubleJump = false;
 	public GameObject Boost;
-	
-	private Animator cloudanim;
+
+	public GameObject OutOfCamera;
+	public static GameObject lastObstacle;
 	public GameObject Cloud;
 
-	private ParticleSystem particle;
-	private ParticleSystem particle2;
+    public ParticleSystem particle;
+	public ParticleSystem particle2;
+
+	public GameObject FurryDashParticle;
 
 	private Rigidbody2D rb2d;
 	private Animator anim;
-	private bool isGrounded = false;
+	private GameObject replicatedPlayer;
+	private CrashChecker crashChecker;
+	public bool isGrounded = false;
+	public int cloneFlag = 1;
 
 
 	// Use this for initialization
 	void Start () {
 		rb2d = GetComponent<Rigidbody2D>();
 		anim = GetComponent<Animator>();
-		particle = GameObject.Find("DashParticle").GetComponent<ParticleSystem>();
-		particle2 = GameObject.Find("DashParticle2").GetComponent<ParticleSystem>();
+		replicatedPlayer = GameObject.Find("Furry Clone");
+		crashChecker = transform.GetChild(4).GetComponent<CrashChecker>();
+		OutOfCamera = GameObject.Find("OutOfCamera");
+
+		FurryDashParticle = GameObject.Find(transform.name + " DashParticle");
+		particle = GameObject.Find(transform.name+" DashParticle").GetComponent<ParticleSystem>();
 		//cloudanim = GetComponent<Animator>();
 
 		Cloud = GameObject.Find("Cloud");
@@ -52,8 +63,7 @@ public class PlayerController : MonoBehaviour {
 
 		if ((Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.LeftAlt)) && (isGrounded || !doubleJump) && !isDashing)
 		{
-			rb2d.velocity = new Vector2(rb2d.velocity.x, 0);
-			rb2d.AddForce(new Vector2(0,jumpForce));
+			isJumping = true;
 
 			if (!doubleJump && !isGrounded)
 			{
@@ -63,10 +73,10 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 
-
 		if (Input.GetKeyDown(KeyCode.DownArrow) && !isGrounded && !isDashing)
 		{
-			rb2d.AddForce(new Vector2(0,-jumpForce));
+			isJumpingReverse = true;
+			
 			Boost = Instantiate(Resources.Load("Prefabs/Cloud"), transform.position, transform.rotation) as GameObject;
 			//cloudanim.Play("cloud");
 		}
@@ -76,6 +86,10 @@ public class PlayerController : MonoBehaviour {
         else
 			dashTimer -= Time.deltaTime;
 
+		if (isJumping)
+			transform.SetParent(GameObject.Find("Players").transform);
+
+		OutOfCamera.transform.position = new Vector3(transform.position.x, OutOfCamera.transform.position.y, OutOfCamera.transform.position.z);
 	}
 
 
@@ -85,9 +99,21 @@ public class PlayerController : MonoBehaviour {
 			doubleJump = false;
 
 		anim.SetBool("IsDashing", isDashing);
+		FurryDashParticle.transform.position = transform.position;
 
 		if (!isDashing)
         {
+			if (isJumping){
+				rb2d.velocity = new Vector2(rb2d.velocity.x, 0);
+				rb2d.AddForce(new Vector2(0, cloneFlag * jumpForce));
+				isJumping = false;
+			}
+
+			if (isJumpingReverse){
+				rb2d.AddForce(new Vector2(0, cloneFlag * -jumpForce));
+				isJumpingReverse = false;
+			}
+
 			hor = Input.GetAxisRaw("Horizontal");
 			if (hor != 0)
 				isMoving = true;
@@ -96,6 +122,12 @@ public class PlayerController : MonoBehaviour {
 
 			anim.SetBool("IsMoving", isMoving);
 
+			if(crashChecker.isCrashed){
+				if(lookingRight && hor > 0)
+					hor = 0;
+				else if(!lookingRight && hor < 0)
+					hor = 0;
+			}
 			rb2d.velocity = new Vector2 (hor * maxSpeed, rb2d.velocity.y);
 		  
 			isGrounded = Physics2D.OverlapCircle (groundCheck.position, 0.15F, whatIsGround);
@@ -105,7 +137,7 @@ public class PlayerController : MonoBehaviour {
 			if ((hor > 0 && !lookingRight)||(hor < 0 && lookingRight))
 				Flip ();
 		 
-			anim.SetFloat ("vSpeed", GetComponent<Rigidbody2D>().velocity.y);
+			anim.SetFloat ("vSpeed", cloneFlag * GetComponent<Rigidbody2D>().velocity.y);
         }
 	}
 
@@ -138,9 +170,8 @@ public class PlayerController : MonoBehaviour {
         }
 
 		rb2d.gravityScale = 0;
-
-		particle.Play();
-
+        particle.Stop();
+        particle.Play();
 		while (timer > 0)
         {
 			rb2d.velocity = new Vector2(dir * dashSpeed, 0);
@@ -150,7 +181,6 @@ public class PlayerController : MonoBehaviour {
 
 		isDashing = false;
 		rb2d.gravityScale = originalGravity;
-		particle.Stop();
 		particle2.Play();
 	}
 }

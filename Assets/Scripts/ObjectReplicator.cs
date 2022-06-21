@@ -74,7 +74,12 @@ public class ObjectReplicator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Mathf.Abs(replicatedPlayer.transform.position.x - player.transform.position.x) > 0.1f)
-            replicatedPlayer.transform.position = new Vector3(player.transform.position.x , replicatedPlayer.transform.position.y, replicatedPlayer.transform.position.z);
+        if(Mathf.Abs(replicatedPlayer.transform.position.x - player.transform.position.x) > 0.1f || Mathf.Abs(replicatedPlayer.transform.position.y - player.transform.position.y) > 0.1f)
+            replicatedPlayer.transform.position = 
+                new Vector3(
+                    player.transform.position.x ,
+                    cam.transform.position.y + (cam.transform.position.y - player.transform.position.y), 
+                    replicatedPlayer.transform.position.z
+                    );
     }
 }

@@ -145,7 +145,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.037212685}
+  m_Offset: {x: 0, y: 0.10711311}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -156,7 +156,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.47902176}
+  m_Size: {x: 1, y: 0.3549964}
   m_EdgeRadius: 0
 --- !u!1 &8585630498674183776
 GameObject:
@@ -297,11 +297,13 @@ MonoBehaviour:
   hor: 0
   isMoving: 0
   lookingRight: 1
+  doubleJump: 0
   Boost: {fileID: 0}
   Cloud: {fileID: 0}
   particle: {fileID: 0}
   particle2: {fileID: 2158601734951750829}
   FurryDashParticle: {fileID: 0}
+  isGrounded: 0
   cloneFlag: 1
 --- !u!212 &8585630499200094912
 SpriteRenderer:
@@ -382,7 +384,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.009278655, y: 0.040726304}
+  m_Offset: {x: 0.009278655, y: -0.023883998}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -393,7 +395,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.6565006, y: 1.0365884}
+  m_Size: {x: 1.6565006, y: 1.165809}
   m_EdgeRadius: 0
 --- !u!1001 &8585630498751127358
 PrefabInstance:

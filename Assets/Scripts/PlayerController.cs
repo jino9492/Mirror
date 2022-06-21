@@ -21,8 +21,9 @@ public class PlayerController : MonoBehaviour {
 	public bool lookingRight = true;
 	public bool doubleJump = false;
 	public GameObject Boost;
-	
-	private Animator cloudanim;
+
+	public GameObject OutOfCamera;
+	public static GameObject lastObstacle;
 	public GameObject Cloud;
 
     public ParticleSystem particle;
@@ -44,6 +45,7 @@ public class PlayerController : MonoBehaviour {
 		anim = GetComponent<Animator>();
 		replicatedPlayer = GameObject.Find("Furry Clone");
 		crashChecker = transform.GetChild(4).GetComponent<CrashChecker>();
+		OutOfCamera = GameObject.Find("OutOfCamera");
 
 		FurryDashParticle = GameObject.Find(transform.name + " DashParticle");
 		particle = GameObject.Find(transform.name+" DashParticle").GetComponent<ParticleSystem>();
@@ -86,6 +88,8 @@ public class PlayerController : MonoBehaviour {
 
 		if (isJumping)
 			transform.SetParent(GameObject.Find("Players").transform);
+
+		OutOfCamera.transform.position = new Vector3(transform.position.x, OutOfCamera.transform.position.y, OutOfCamera.transform.position.z);
 	}
 
 

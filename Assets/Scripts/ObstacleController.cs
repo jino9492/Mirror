@@ -20,18 +20,20 @@ public class ObstacleController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.name == "Furry")
-            collider.transform.position = new Vector3(-3, -2, 0);
-        else
-            collider.transform.position = new Vector3(-3, 2, 0);
+        print(collider.name);
 
         cam.StartCoroutine("CameraShake");
 
-        GameObject bloodParticle = Instantiate(Resources.Load("Prefabs/BloodParticle"), collider.transform.position, collider.transform.rotation) as GameObject;
-
         if (collider.name == "Furry Clone")
-            bloodParticle.GetComponent<ParticleSystem>().gravityModifier *= -1;
+            Instantiate(Resources.Load("Prefabs/ReplicatedPlayerBloodParticle"), collider.transform.position, collider.transform.rotation);
+        else if (collider.name == "Furry")
+            Instantiate(Resources.Load("Prefabs/PlayerBloodParticle"), collider.transform.position, collider.transform.rotation);
 
-        //collider.gameObject.SetActive(false);
+
+        if (collider.CompareTag("Player"))
+        {
+            GameManager.isPlayerDead = true;
+            Destroy(collider.gameObject);
+        }
     }
 }

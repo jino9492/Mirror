@@ -4,28 +4,66 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private float timer = 0f;
+    public CameraController cam;
+
+    public static bool isPlayerDead;
+    private bool playerCanReset;
+    private float playerResetTimer = 0f;
+    private float playerResetTime = 1f;
+    private GameObject[] players = new GameObject[2];
+
     private float regenerateTime = 2f;
-    private ResetJump[] resets = new ResetJump[2];
+    private GameObject[] resets;
+
+    private ObjectReplicator objRepl;
+
     // Start is called before the first frame update
     void Start()
     {
-        resets[0] = GameObject.Find("ResetJump").GetComponent<ResetJump>();
-        resets[1] = GameObject.Find("ResetJump(Clone)").GetComponent<ResetJump>();
+        resets = GameObject.FindGameObjectsWithTag("ResetJump");
+
+        players = GameObject.FindGameObjectsWithTag("Player");
+        objRepl = GetComponent<ObjectReplicator>();
+        cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!resets[0].transform.gameObject.activeSelf && !resets[1].transform.gameObject.activeSelf)
+        foreach(GameObject reset in resets)
         {
-            timer += Time.deltaTime;
-            if (timer > regenerateTime)
+            if (!reset.transform.gameObject.activeSelf)
             {
-                resets[0].transform.gameObject.SetActive(true);
-                resets[1].transform.gameObject.SetActive(true);
-                timer = 0f;
+                reset.GetComponent<ResetJump>().timer += Time.deltaTime;
+                if (reset.GetComponent<ResetJump>().timer > regenerateTime)
+                {
+                    reset.transform.gameObject.SetActive(true);
+                    reset.GetComponent<ResetJump>().timer = 0f;
+                }
+            }
+        
+        }
+
+        if (isPlayerDead)
+        {
+            playerResetTimer += Time.deltaTime;
+            if(playerResetTimer > playerResetTime)
+            {
+                playerCanReset = true;
             }
         }
+
+        if (Input.anyKeyDown && playerCanReset)
+        {
+            playerCanReset = false;
+            isPlayerDead = false;
+            playerResetTimer = 0f;
+            GameObject playerObj = Instantiate(Resources.Load("Prefabs/Furry"), PlayerController.lastObstacle.transform.position + new Vector3(0, 1f, 0), Quaternion.identity) as GameObject;
+            cam.playerTransform = playerObj.transform;
+            playerObj.name = "Furry";
+            objRepl.ReplicatePlayer(playerObj);
+        }
+
+        print(PlayerController.lastObstacle.transform.position);
     }
 }

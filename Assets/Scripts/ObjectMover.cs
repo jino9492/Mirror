@@ -23,10 +23,13 @@ public class ObjectMover : MonoBehaviour
     public float waittingTime;
     private float timer;
     private float speedScaler = 1;
+    private CameraController cam;
 
     // Start is called before the first frame update
     void Start()
     {
+        cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>();
+
         if (transform.name.Contains("Clone"))
             cloneFlag = -1;
 
@@ -132,15 +135,19 @@ public class ObjectMover : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Foot") && !other.name.StartsWith("Harmful"))
+        if (other.CompareTag("Foot"))
         {
             other.transform.parent.transform.SetParent(transform);
+            if (!transform.CompareTag("HarmfulObstacle") && transform.position.y < cam.transform.position.y)
+            {
+                PlayerController.lastObstacle = gameObject;
+            }
         }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Foot"))
+        if (other.CompareTag("Foot") && other.gameObject.activeSelf)
         {
             other.transform.parent.transform.SetParent(GameObject.Find("Players").transform);
         }

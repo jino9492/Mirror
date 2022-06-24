@@ -6,12 +6,22 @@ public class CameraController : MonoBehaviour
 	public Transform playerTransform;
 	public float m_speed = 0.1f;
 	public float Y_cameraOffset = 0f;
+
 	public GameObject background;
 	public GameObject mirror;
 	private Camera mycam;
 
 	public float shakeDuration;
 	public float magnitude;
+
+	[Header("Set Limit")]
+	public bool useLeftLimit;
+	public float leftLimitPosition;
+
+	public bool useRightLimit;
+	public float rightLimitPosition;
+
+	public bool isLimit;
 
 	public void Start()
 	{
@@ -25,12 +35,37 @@ public class CameraController : MonoBehaviour
 
 		if (playerTransform) 
 		{
-			transform.position = Vector3.Lerp(transform.position, new Vector3(playerTransform.position.x, Y_cameraOffset, playerTransform.position.z), m_speed) + new Vector3(0, 0, -12);
-			background.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
-			mirror.transform.position = new Vector3(transform.position.x, mirror.transform.position.y, mirror.transform.position.z);
+			if (useLeftLimit)
+			{
+				if (playerTransform.position.x < leftLimitPosition)
+				{
+					transform.position = Vector3.Lerp(transform.position, new Vector3(leftLimitPosition, transform.position.y, transform.position.z), .1f);
+					isLimit = true;
+				}
+				else
+					isLimit = false;
+			}
+
+			if (useRightLimit)
+			{
+				if (transform.position.x > rightLimitPosition)
+				{
+					transform.position = Vector3.Lerp(transform.position, new Vector3(rightLimitPosition, transform.position.y, transform.position.z), .1f);
+					isLimit = true;
+				}
+				else
+					isLimit = false;
+			}
+
+			if (!isLimit)
+            {
+				transform.position = Vector3.Lerp(transform.position, new Vector3(playerTransform.position.x, Y_cameraOffset, playerTransform.position.z), m_speed) + new Vector3(0, 0, -12);
+				background.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+				mirror.transform.position = new Vector3(transform.position.x, mirror.transform.position.y, mirror.transform.position.z);
+            }
 		}
 
-
+		
 	}
 
 	public IEnumerator CameraShake()

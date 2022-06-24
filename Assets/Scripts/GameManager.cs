@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,14 +14,19 @@ public class GameManager : MonoBehaviour
     private GameObject[] players = new GameObject[2];
 
     private float regenerateTime = 2f;
-    private GameObject[] resets;
+    private GameObject[] resetObjects;
+    private ResetJump[] resets;
 
     private ObjectReplicator objRepl;
 
     // Start is called before the first frame update
     void Start()
     {
-        resets = GameObject.FindGameObjectsWithTag("ResetJump");
+        resetObjects = GameObject.FindGameObjectsWithTag("ResetJump");
+
+        resets = new ResetJump[resetObjects.Length];
+        foreach (var resetObject in resetObjects.Select((value, index) => (value, index)))
+            resets[resetObject.index] = resetObject.value.GetComponent<ResetJump>();
 
         players = GameObject.FindGameObjectsWithTag("Player");
         objRepl = GetComponent<ObjectReplicator>();
@@ -30,15 +36,15 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        foreach(GameObject reset in resets)
+        foreach(ResetJump reset in resets)
         {
             if (!reset.transform.gameObject.activeSelf)
             {
-                reset.GetComponent<ResetJump>().timer += Time.deltaTime;
-                if (reset.GetComponent<ResetJump>().timer > regenerateTime)
+                reset.timer += Time.deltaTime;
+                if (reset.timer > regenerateTime)
                 {
                     reset.transform.gameObject.SetActive(true);
-                    reset.GetComponent<ResetJump>().timer = 0f;
+                    reset.timer = 0f;
                 }
             }
         
@@ -46,6 +52,11 @@ public class GameManager : MonoBehaviour
 
         if (isPlayerDead)
         {
+            if (players[0] != null)
+                Destroy(players[0]);
+            if (players[1] != null)
+                Destroy(players[1]);
+
             playerResetTimer += Time.deltaTime;
             if(playerResetTimer > playerResetTime)
             {
@@ -58,12 +69,14 @@ public class GameManager : MonoBehaviour
             playerCanReset = false;
             isPlayerDead = false;
             playerResetTimer = 0f;
+
             GameObject playerObj = Instantiate(Resources.Load("Prefabs/Furry"), PlayerController.lastObstacle.transform.position + new Vector3(0, 1f, 0), Quaternion.identity) as GameObject;
+            players[0] = playerObj;
             cam.playerTransform = playerObj.transform;
             playerObj.name = "Furry";
-            objRepl.ReplicatePlayer(playerObj);
-        }
 
-        print(PlayerController.lastObstacle.transform.position);
+            GameObject ClonePlayerObj = objRepl.ReplicatePlayer(playerObj);
+            players[1] = ClonePlayerObj;
+        }
     }
 }

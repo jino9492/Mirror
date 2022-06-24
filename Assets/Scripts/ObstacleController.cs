@@ -20,9 +20,6 @@ public class ObstacleController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collider)
     {
-        print(collider.name);
-
-        cam.StartCoroutine("CameraShake");
 
         if (collider.name == "Furry Clone")
             Instantiate(Resources.Load("Prefabs/ReplicatedPlayerBloodParticle"), collider.transform.position, collider.transform.rotation);
@@ -32,8 +29,8 @@ public class ObstacleController : MonoBehaviour
 
         if (collider.CompareTag("Player"))
         {
+            cam.StartCoroutine("CameraShake");
             GameManager.isPlayerDead = true;
-            Destroy(collider.gameObject);
         }
     }
 }

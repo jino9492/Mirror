@@ -43,23 +43,26 @@ public class ObjectReplicator : MonoBehaviour
 
         foreach (GameObject obstacle in HarmfulObstacleObjects)
         {
-            GameObject newObstacle = Instantiate(obstacle) as GameObject;
-            newObstacle.transform.position = new Vector3(newObstacle.transform.position.x, cam.transform.position.y + (cam.transform.position.y - newObstacle.transform.position.y), 0);
-            if (newObstacle.transform.position.y > cam.transform.position.y && newObstacle.GetComponent<BoxCollider2D>() != null)
+            if (!obstacle.name.Contains("Camera"))
             {
-                newObstacle.transform.position =
-                    new Vector3(
-                        newObstacle.transform.position.x,
-                        newObstacle.transform.position.y - newObstacle.GetComponent<BoxCollider2D>().offset.y,
-                        newObstacle.transform.position.z
-                        );
-            }
+                GameObject newObstacle = Instantiate(obstacle) as GameObject;
+                newObstacle.transform.position = new Vector3(newObstacle.transform.position.x, cam.transform.position.y + (cam.transform.position.y - newObstacle.transform.position.y), 0);
+                if (newObstacle.transform.position.y > cam.transform.position.y && newObstacle.GetComponent<BoxCollider2D>() != null)
+                {
+                    newObstacle.transform.position =
+                        new Vector3(
+                            newObstacle.transform.position.x,
+                            newObstacle.transform.position.y - newObstacle.GetComponent<BoxCollider2D>().offset.y,
+                            newObstacle.transform.position.z
+                            );
+                }
 
-            newObstacle.transform.SetParent(GameObject.Find("Obstacles").transform);
-            if (newObstacle.GetComponent<SpriteRenderer>() != null)
-                newObstacle.GetComponent<SpriteRenderer>().sprite = null;
-            else
-                newObstacle.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = null;
+                newObstacle.transform.SetParent(GameObject.Find("Obstacles").transform);
+                if (newObstacle.GetComponent<SpriteRenderer>() != null)
+                    newObstacle.GetComponent<SpriteRenderer>().sprite = null;
+                else
+                    newObstacle.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = null;
+            }
         }
 
         foreach (GameObject obstacle in resetJump)
@@ -101,7 +104,7 @@ public class ObjectReplicator : MonoBehaviour
                     );
     }
 
-    public void ReplicatePlayer(GameObject player)
+    public GameObject ReplicatePlayer(GameObject player)
     {
         this.player = player;
         replicatedPlayer = Instantiate(Resources.Load("Prefabs/Furry")) as GameObject;
@@ -111,5 +114,7 @@ public class ObjectReplicator : MonoBehaviour
         replicatedPlayer.transform.rotation = Quaternion.Euler(0, 180, 180);
         replicatedPlayer.GetComponent<Rigidbody2D>().gravityScale *= -1;
         replicatedPlayer.GetComponent<PlayerController>().cloneFlag = -1;
+
+        return replicatedPlayer;
     }
 }

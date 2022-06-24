@@ -23,6 +23,7 @@ public class ObjectMover : MonoBehaviour
     public float waittingTime;
     private float timer;
     private float speedScaler = 1;
+    private bool isObjectPitching;
     private CameraController cam;
 
     // Start is called before the first frame update
@@ -137,6 +138,9 @@ public class ObjectMover : MonoBehaviour
     {
         if (other.CompareTag("Foot"))
         {
+            if (!isObjectPitching && transform.name.Contains("Ground"))
+                StartCoroutine("PitchObstacle");
+
             other.transform.parent.transform.SetParent(transform);
             if (!transform.CompareTag("HarmfulObstacle") && transform.position.y < cam.transform.position.y)
             {
@@ -177,5 +181,39 @@ public class ObjectMover : MonoBehaviour
             else
                 Gizmos.DrawLine(topEnd.transform.position, bottomEnd.transform.position);
         }
+    }
+
+    public IEnumerator PitchObstacle()
+    {
+        float original_offset = transform.position.y;
+
+        float offsetSize = .2f;
+        float y_offset;
+        if (transform.position.y > 0)
+            y_offset = transform.position.y + offsetSize;
+        else
+            y_offset = transform.position.y - offsetSize;
+
+        float elapsedTime = .4f;
+        float timer = 0f;
+
+        isObjectPitching = true;
+        while (timer <= elapsedTime)
+        {
+            transform.position = Vector3.Lerp(transform.position, new Vector3(transform.position.x, y_offset, transform.position.z), .05f);
+            timer += Time.deltaTime;
+
+            yield return null;
+        }
+
+        while (Mathf.Abs(transform.position.y - original_offset) > .001f)
+        {
+            transform.position = Vector3.Lerp(transform.position, new Vector3(transform.position.x, original_offset, transform.position.z), .05f);
+            timer -= Time.deltaTime;
+
+            yield return null;
+        }
+
+        isObjectPitching = false;
     }
 }

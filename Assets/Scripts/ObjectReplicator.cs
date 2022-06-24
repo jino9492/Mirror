@@ -94,7 +94,6 @@ public class ObjectReplicator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        print(replicatedPlayer);
         if(replicatedPlayer != null && player != null)
             replicatedPlayer.transform.position = 
                 new Vector3(

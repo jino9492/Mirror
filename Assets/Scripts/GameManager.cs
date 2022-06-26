@@ -70,7 +70,13 @@ public class GameManager : MonoBehaviour
             isPlayerDead = false;
             playerResetTimer = 0f;
 
-            GameObject playerObj = Instantiate(Resources.Load("Prefabs/Furry"), PlayerController.lastObstacle.transform.position + new Vector3(0, 1f, 0), Quaternion.identity) as GameObject;
+            Vector3 savePoint = PlayerController.lastObstacle.transform.position;
+            if (PlayerController.lastObstacle.GetComponent<ObjectMover>().hasOwnSavePoint)
+            {
+                savePoint = savePoint + (Vector3)PlayerController.lastObstacle.GetComponent<ObjectMover>().savePointOffset;
+            }
+
+            GameObject playerObj = Instantiate(Resources.Load("Prefabs/Furry"), savePoint + new Vector3(0, 1f, 0), Quaternion.identity) as GameObject;
             players[0] = playerObj;
             cam.playerTransform = playerObj.transform;
             playerObj.name = "Furry";

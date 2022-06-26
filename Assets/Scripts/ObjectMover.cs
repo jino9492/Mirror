@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public class ObjectMover : MonoBehaviour
 {
@@ -19,6 +20,11 @@ public class ObjectMover : MonoBehaviour
     public bool isLeft;
     public bool isTop;
     public bool isBottom;
+
+    public bool hasOwnSavePoint;
+    public Vector2 savePointOffset;
+
+    public bool hasNoSavePoint;
 
     public float waittingTime;
     private float timer;
@@ -144,7 +150,8 @@ public class ObjectMover : MonoBehaviour
             other.transform.parent.transform.SetParent(transform);
             if (!transform.CompareTag("HarmfulObstacle") && transform.position.y < cam.transform.position.y)
             {
-                PlayerController.lastObstacle = gameObject;
+                if (!hasNoSavePoint)
+                    PlayerController.lastObstacle = gameObject;
             }
         }
     }
@@ -198,20 +205,24 @@ public class ObjectMover : MonoBehaviour
         float timer = 0f;
 
         isObjectPitching = true;
-        while (timer <= elapsedTime)
+
+        if (horizontalSize == 0)
         {
-            transform.position = Vector3.Lerp(transform.position, new Vector3(transform.position.x, y_offset, transform.position.z), .05f);
-            timer += Time.deltaTime;
+            while (timer <= elapsedTime)
+            {
+                transform.position = Vector3.Lerp(transform.position, new Vector3(transform.position.x, y_offset, transform.position.z), .05f);
+                timer += Time.deltaTime;
 
-            yield return null;
-        }
+                yield return null;
+            }
 
-        while (Mathf.Abs(transform.position.y - original_offset) > .001f)
-        {
-            transform.position = Vector3.Lerp(transform.position, new Vector3(transform.position.x, original_offset, transform.position.z), .05f);
-            timer -= Time.deltaTime;
+            while (Mathf.Abs(transform.position.y - original_offset) > .001f)
+            {
+                transform.position = Vector3.Lerp(transform.position, new Vector3(transform.position.x, original_offset, transform.position.z), .05f);
+                timer -= Time.deltaTime;
 
-            yield return null;
+                yield return null;
+            }
         }
 
         isObjectPitching = false;

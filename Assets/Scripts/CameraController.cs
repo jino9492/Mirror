@@ -42,18 +42,18 @@ public class CameraController : MonoBehaviour
 					transform.position = Vector3.Lerp(transform.position, new Vector3(leftLimitPosition, transform.position.y, transform.position.z), .1f);
 					isLimit = true;
 				}
-				else
+				else if (playerTransform.position.x < rightLimitPosition)
 					isLimit = false;
 			}
 
 			if (useRightLimit)
 			{
-				if (transform.position.x > rightLimitPosition)
+				if (playerTransform.position.x > rightLimitPosition)
 				{
 					transform.position = Vector3.Lerp(transform.position, new Vector3(rightLimitPosition, transform.position.y, transform.position.z), .1f);
 					isLimit = true;
 				}
-				else
+				else if(playerTransform.position.x > leftLimitPosition)
 					isLimit = false;
 			}
 
